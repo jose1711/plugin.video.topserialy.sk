@@ -48,8 +48,8 @@ class TopSerialyContentProvider(ContentProvider):
         return result
 
     def search(self, keyword):
-        return self.list_series('http://www.topserialy.sk'+
-            '/search.php?search=' + urllib.quote_plus(keyword))
+        return self.list_series('http://www.topserialy.sk' +
+                                '/search.php?search=' + urllib.quote_plus(keyword))
 
     def list(self, url):
         if 'serialy.' in url:
@@ -68,20 +68,20 @@ class TopSerialyContentProvider(ContentProvider):
     def list_series(self, url):
         result = []
         tree = util.parse_html(url)
-	series_list=tree.select('.vysledky-hladania a.single-result')
-	if series_list:
+        series_list = tree.select('.vysledky-hladania a.single-result')
+        if series_list:
             for series in tree.select('.vysledky-hladania a.single-result'):
                 item = self.dir_item()
                 item['title'] = series.get('data-name')
-                item['url'] = 'http://www.topserialy.sk'+series.get('href')
-                item['img'] = 'http://www.topserialy.sk'+series.img.get('data-original')
+                item['url'] = 'http://www.topserialy.sk' + series.get('href')
+                item['img'] = 'http://www.topserialy.sk' + series.img.get('data-original')
                 result.append(item)
         else:
             for series in tree.select('.container a'):
                 item = self.dir_item()
-                item['title'] = series.findAll('span','name-search')[0].text
-                item['url'] = 'http:'+series.get('href')
-                item['img'] = 'http:'+series.img.get('src')
+                item['title'] = series.findAll('span', 'name-search')[0].text
+                item['url'] = 'http:' + series.get('href')
+                item['img'] = 'http:' + series.img.get('src')
                 result.append(item)
         return sorted(result)
 
@@ -98,10 +98,10 @@ class TopSerialyContentProvider(ContentProvider):
         result = []
         for episode in util.parse_html(url).select('a'):
             item = self.video_item()
-            item['url'] = 'http://www.topserialy.sk/'+episode.get('href')
-            season_episode=item['url'].split('-')[-1].upper()
-            item['title'] = season_episode+' '+episode.text.strip()
-            item['number'] = int(''.join(re.findall(r'[0-9]',season_episode)))
+            item['url'] = 'http://www.topserialy.sk/' + episode.get('href')
+            season_episode = item['url'].split('-')[-1].upper()
+            item['title'] = season_episode + ' ' + episode.text.strip()
+            item['number'] = int(''.join(re.findall(r'[0-9]', season_episode)))
             result.append(item)
         return sorted(result, key=lambda k: k['number'])
 
@@ -114,4 +114,4 @@ class TopSerialyContentProvider(ContentProvider):
         if len(result) == 1:
             return result[0]
         elif len(result) > 1 and select_cb:
-	    return select_cb(result)
+            return select_cb(result)
