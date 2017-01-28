@@ -21,6 +21,7 @@
 # */
 import urllib
 import util
+import base64
 import re
 from provider import ContentProvider
 
@@ -107,10 +108,17 @@ class TopSerialyContentProvider(ContentProvider):
 
     def resolve(self, item, captcha_cb=None, select_cb=None):
         streams = []
-        links = util.parse_html(item['url']).select('iframe')
+        links = util.parse_html(item['url']).select('script')
         for link in links:
-            streams.append(link['src'])
-        result = self.findstreams(streams)
+            if 'data = ' in str(link):
+                break
+        link = re.search(r'data = "([^"]+)".*', str(link)).group(1)
+        link = base64.b64decode(link)
+
+        sources = [x.group(1) for x in re.finditer('iframe src=("[^"]+")', link)]
+        sources = [x.replace('b3BlbmxvYWRmdWNrZG1jYXRyb2xscw==',
+                             'https://openload.co/embed') for x in sources]
+        result = self.findstreams(sources)
         if len(result) == 1:
             return result[0]
         elif len(result) > 1 and select_cb:
