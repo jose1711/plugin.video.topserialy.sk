@@ -23,7 +23,9 @@ import urllib
 import util
 import base64
 import re
+import urlresolver
 from provider import ContentProvider
+from copy import copy
 
 
 class TopSerialyContentProvider(ContentProvider):
@@ -115,10 +117,48 @@ class TopSerialyContentProvider(ContentProvider):
         link = re.search(r'data = "([^"]+)".*', str(link)).group(1)
         link = base64.b64decode(link)
 
-        sources = [x.group(1) for x in re.finditer('iframe src=("[^"]+")', link)]
+        sources = [x.group(1) for x in re.finditer('iframe src="([^"]+)"', link)]
         sources = [x.replace('b3BlbmxvYWRmdWNrZG1jYXRyb2xscw==',
                              'https://openload.co/embed') for x in sources]
-        result = self.findstreams(sources)
+        result = []
+        subs = []
+        for source in sources:
+            if 'openload' in str(source):
+                provider = 'OPENLOAD'
+                metas = util.parse_html(source).select('meta')
+                fname = util.request(source)
+                for meta in metas:
+                    if meta['name'] in 'description':
+                        fname = meta['content']
+                code = source.split('/')[-2]
+                url = 'http://openload.co/f/' + code + '/' + fname.replace(' ', '.')
+                for track in util.parse_html(source).select('track'):
+                    if track.get('src'):
+                        subs.append([track['src'], track['srclang']])
+            elif 'flashx' in str(source):
+                provider = 'FLASHX'
+                code = re.search('embed-([^.-]+)[\.-]', source).group(1)
+                url = 'https://www.flashx.tv/embed.php?c=%s' % code
+            else:
+                continue
+            hmf = urlresolver.HostedMediaFile(url=url, include_disabled=True,
+                                              include_universal=False)
+            part = 'None'
+            if hmf.valid_url() is True:
+                surl = hmf.resolve()
+                item = self.video_item()
+                item['title'] = provider
+                item['url'] = surl
+                result.append(item)
+        if subs:
+            _result = []
+            for sub in subs:
+                for item in result:
+                    item = copy(item)
+                    item['subs'] = sub[0]
+                    item['title'] += ' {0}'.format(sub[1])
+                    _result.append(item)
+            result = _result
         if len(result) == 1:
             return result[0]
         elif len(result) > 1 and select_cb:
