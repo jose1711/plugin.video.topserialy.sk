@@ -104,7 +104,10 @@ class TopSerialyContentProvider(ContentProvider):
             item['url'] = 'http://www.topserialy.sk/' + episode.get('href')
             season_episode = item['url'].split('-')[-1].upper()
             item['title'] = season_episode + ' ' + episode.text.strip()
-            item['number'] = int(''.join(re.findall(r'[0-9]', season_episode)))
+            try:
+                item['number'] = int(''.join(re.findall(r'[0-9]', season_episode)))
+            except ValueError:
+                item['number'] = 0
             result.append(item)
         return sorted(result, key=lambda k: k['number'])
 
