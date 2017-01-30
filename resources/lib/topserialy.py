@@ -141,11 +141,14 @@ class TopSerialyContentProvider(ContentProvider):
                 url = 'https://www.flashx.tv/embed.php?c=%s' % code
             else:
                 continue
-            hmf = urlresolver.HostedMediaFile(url=url, include_disabled=True,
+            hmf = urlresolver.HostedMediaFile(url=url, include_disabled=False,
                                               include_universal=False)
             part = 'None'
             if hmf.valid_url() is True:
-                surl = hmf.resolve()
+                try:
+                    surl = hmf.resolve()
+                except:
+                    continue
                 item = self.video_item()
                 item['title'] = provider
                 item['url'] = surl
