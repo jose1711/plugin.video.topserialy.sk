@@ -71,13 +71,14 @@ class TopSerialyContentProvider(ContentProvider):
     def list_series(self, url):
         result = []
         tree = util.parse_html(url)
-        series_list = tree.select('.vysledky-hladania a.single-result')
+        series_list = tree.select('.mk-search-page')
         if series_list:
-            for series in tree.select('.vysledky-hladania a.single-result'):
+            for series in tree.select('.container a'):
                 item = self.dir_item()
-                item['title'] = series.get('data-name')
+                print series.get('span')
+                item['title'] = series.select('span .name-search')[0].text
                 item['url'] = 'http://www.topserialy.sk' + series.get('href')
-                item['img'] = 'http://www.topserialy.sk' + series.img.get('data-original')
+                item['img'] = 'http://www.topserialy.sk' + series.span.img.get('src')
                 result.append(item)
         else:
             for series in tree.select('.container a'):
