@@ -29,7 +29,7 @@ from copy import copy
 
 
 class TopSerialyContentProvider(ContentProvider):
-    urls = {'Seriály': 'http://www.topserialy.sk/serialy'}
+    urls = {'Seriály': 'http://www.topserialy.sk/serialy-abeceda'}
 
     def __init__(self, username=None, password=None, filter=None):
         ContentProvider.__init__(self, 'topserialy.sk', self.urls['Seriály'],
@@ -75,17 +75,15 @@ class TopSerialyContentProvider(ContentProvider):
         if series_list:
             for series in tree.select('.container a'):
                 item = self.dir_item()
-                print series.get('span')
                 item['title'] = series.select('span .name-search')[0].text
                 item['url'] = 'http://www.topserialy.sk' + series.get('href')
                 item['img'] = 'http://www.topserialy.sk' + series.span.img.get('src')
                 result.append(item)
         else:
-            for series in tree.select('.container a'):
+            for series in tree.select('ul.mk-menu li a'):
                 item = self.dir_item()
-                item['title'] = series.findAll('span', 'name-search')[0].text
-                item['url'] = 'http:' + series.get('href')
-                item['img'] = 'http:' + series.img.get('src')
+                item['title'] = series.text
+                item['url'] = series.get('href')
                 result.append(item)
         return sorted(result)
 
@@ -143,7 +141,11 @@ class TopSerialyContentProvider(ContentProvider):
                 provider = 'FLASHX'
                 code = re.search('embed-([^.-]+)[\.-]', source).group(1)
                 url = 'https://www.flashx.tv/embed.php?c=%s' % code
+            elif 'youwatch.org' in str(source):
+                provider = 'YOUWATCH'
+                url = source
             else:
+                # fail on any other hoster
                 continue
             hmf = urlresolver.HostedMediaFile(url=url, include_disabled=False,
                                               include_universal=False)
