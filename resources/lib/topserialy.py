@@ -30,7 +30,7 @@ from copy import copy
 
 
 class TopSerialyContentProvider(ContentProvider):
-    urls = {'Seriály': 'http://www.topserialy.sk/serialy-abeceda'}
+    urls = {'Seriály': 'http://www.topserialy.sk/serialy'}
 
     def __init__(self, username=None, password=None, filter=None):
         ContentProvider.__init__(self, 'topserialy.sk', self.urls['Seriály'],
@@ -81,10 +81,16 @@ class TopSerialyContentProvider(ContentProvider):
                 item['img'] = 'http://www.topserialy.sk' + series.span.img.get('src')
                 result.append(item)
         else:
-            for series in tree.select('ul.mk-menu li a'):
+            for series in tree.select('.container a.single-result'):
                 item = self.dir_item()
-                item['title'] = series.text
-                item['url'] = series.get('href')
+                original_title = series.select('.original')[0].text
+                czsk_title = series.select('.cz-sk')[0].text
+                title = original_title
+                if czsk_title not in '......' and czsk_title != original_title:
+                    title += ' (' + czsk_title + ')'
+                item['title'] = title
+                item['url'] = 'http://www.topserialy.sk' + series.get('href')
+                item['img'] = 'http://www.topserialy.sk' + series.img.get('data-original')
                 result.append(item)
         return sorted(result)
 
