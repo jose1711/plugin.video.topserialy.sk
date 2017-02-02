@@ -24,6 +24,7 @@ import util
 import base64
 import re
 import urlresolver
+import bs4
 from provider import ContentProvider
 from copy import copy
 
@@ -116,15 +117,22 @@ class TopSerialyContentProvider(ContentProvider):
         for link in links:
             if 'data = ' in str(link):
                 break
-        link = re.search(r'data = "([^"]+)".*', str(link)).group(1)
-        link = base64.b64decode(link)
+        links = re.search(r'data = "([^"]+)".*', str(link)).group(1)
+        links = base64.b64decode(links)
+        soup = bs4.BeautifulSoup(links, 'html5lib')
 
-        sources = [x.group(1) for x in re.finditer('iframe src="([^"]+)"', link)]
+        sources = [x.group(1) for x in re.finditer('iframe src="([^"]+)"',
+                                                   links)]
+        lang_regex = re.compile(r'[^(]+\(([^)]+)\)')
+        sources_lang = [lang_regex.search(x.a.text).group(1) for x in
+                        soup.select('li')]
+        sources = soup.select('iframe')
+        sources = [x['src'] for x in sources]
         sources = [x.replace('b3BlbmxvYWRmdWNrZG1jYXRyb2xscw==',
                              'https://openload.co/embed') for x in sources]
         result = []
         subs = []
-        for source in sources:
+        for index, source in enumerate(sources):
             if 'openload' in str(source):
                 provider = 'OPENLOAD'
                 metas = util.parse_html(source).select('meta')
@@ -150,13 +158,14 @@ class TopSerialyContentProvider(ContentProvider):
             hmf = urlresolver.HostedMediaFile(url=url, include_disabled=False,
                                               include_universal=False)
             part = 'None'
+            language = sources_lang[index]
             if hmf.valid_url() is True:
                 try:
                     surl = hmf.resolve()
                 except:
                     continue
                 item = self.video_item()
-                item['title'] = provider
+                item['title'] = '{0} ({1})'.format(provider, language)
                 item['url'] = surl
                 result.append(item)
         if subs:
