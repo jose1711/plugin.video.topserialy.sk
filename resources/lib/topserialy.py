@@ -30,10 +30,10 @@ from copy import copy
 
 
 class TopSerialyContentProvider(ContentProvider):
-    urls = {'Seriály': 'http://www.topserialy.sk/serialy'}
+    urls = {'Seriály': 'https://www.topserialy.to/serialy'}
 
     def __init__(self, username=None, password=None, filter=None):
-        ContentProvider.__init__(self, 'topserialy.sk', self.urls['Seriály'],
+        ContentProvider.__init__(self, 'topserialy.to', self.urls['Seriály'],
                                  username, password, filter)
 
     def __del__(self):
@@ -52,7 +52,7 @@ class TopSerialyContentProvider(ContentProvider):
         return result
 
     def search(self, keyword):
-        return self.list_series('http://www.topserialy.sk' +
+        return self.list_series('https://www.topserialy.to' +
                                 '/search.php?search=' + urllib.quote_plus(keyword))
 
     def list(self, url):
@@ -60,7 +60,7 @@ class TopSerialyContentProvider(ContentProvider):
             if 'epizody' in url:
                 print "listing episodes.."
                 return self.list_episodes(url)
-            elif 'topserialy.sk/serialy' in url:
+            elif 'topserialy.to/serialy' in url:
                 print "listing series.."
                 return self.list_series(url)
             print "listing seasons.."
@@ -77,8 +77,8 @@ class TopSerialyContentProvider(ContentProvider):
             for series in tree.select('.container a'):
                 item = self.dir_item()
                 item['title'] = series.select('span .name-search')[0].text
-                item['url'] = 'http://www.topserialy.sk' + series.get('href')
-                item['img'] = 'http://www.topserialy.sk' + series.span.img.get('src')
+                item['url'] = 'https://www.topserialy.to' + series.get('href')
+                item['img'] = 'https://www.topserialy.to' + series.span.img.get('src')
                 result.append(item)
         else:
             for series in tree.select('.container a.single-result'):
@@ -89,8 +89,8 @@ class TopSerialyContentProvider(ContentProvider):
                 if czsk_title not in '......' and czsk_title != original_title:
                     title += ' (' + czsk_title + ')'
                 item['title'] = title
-                item['url'] = 'http://www.topserialy.sk' + series.get('href')
-                item['img'] = 'http://www.topserialy.sk' + series.img.get('data-original')
+                item['url'] = 'https://www.topserialy.to' + series.get('href')
+                item['img'] = 'https://www.topserialy.to' + series.img.get('data-original')
                 result.append(item)
         return sorted(result)
 
@@ -99,7 +99,7 @@ class TopSerialyContentProvider(ContentProvider):
         for season in util.parse_html(url).select('.accordion'):
             item = self.dir_item()
             item['title'] = season.text.strip()
-            item['url'] = 'http://www.topserialy.sk' + season.p['data']
+            item['url'] = 'https://www.topserialy.to' + season.p['data']
             result.append(item)
         return result
 
@@ -107,7 +107,7 @@ class TopSerialyContentProvider(ContentProvider):
         result = []
         for episode in util.parse_html(url).select('a'):
             item = self.video_item()
-            item['url'] = 'http://www.topserialy.sk/' + episode.get('href')
+            item['url'] = 'https://www.topserialy.to/' + episode.get('href')
             season_episode = item['url'].split('-')[-1].upper()
             item['title'] = season_episode + ' ' + episode.text.strip()
             try:
