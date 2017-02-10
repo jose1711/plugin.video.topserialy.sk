@@ -1,3 +1,7 @@
+[B]0.0.10:[/B]
+base URL as variable
+added configure options topserialy.to username and password
+
 [B]0.0.9:[/B]
 topserialy.sk resited to topserialy.to
 

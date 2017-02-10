@@ -3,6 +3,8 @@
 	<string id="30001">Video nie je dostupné, skontrolujte,[CR] či funguje prehrávanie na webe.</string>
 	<string id="30003">[B]Najnovšie epizódy[/B]</string>
 	<string id="30004">Vyberte zdroj</string>
+	<string id="30011">Prihlasovacie meno</string>
+	<string id="30012">Heslo</string>
 	<string id="30030">Adresár pre sťahovanie</string>
 	<string id="30031">Nastavte prosím priečinok pre sťahovanie</string>
 	<string id="30032">Zobrazovať stav sťahovania</string>

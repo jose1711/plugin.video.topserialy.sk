@@ -4,6 +4,8 @@
 	<string id="30002">Playing this video[CR]is not yet supported.</string>
 	<string id="30003">[B]Latest episodes[/B]</string>
 	<string id="30004">Choose video source</string>
+	<string id="30011">User name</string>
+	<string id="30012">Password</string>
 	<string id="30030">Downloads</string>
 	<string id="30031">Please setup downloads folder</string>
 	<string id="30032">Notify when downloading</string>
