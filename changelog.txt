@@ -1,3 +1,6 @@
+[B]0.1.0:[/B]
+disable openload as resolver is broken
+
 [B]0.0.9:[/B]
 topserialy.sk resited to topserialy.to
 
