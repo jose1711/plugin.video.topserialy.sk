@@ -23,6 +23,7 @@ import urllib
 import util
 import base64
 import re
+import sys
 import urlresolver
 import bs4
 import xbmcaddon
@@ -33,6 +34,9 @@ __addon__ = xbmcaddon.Addon()
 
 BASE = "topserialy.to"
 BASE_URL = u"https://www.topserialy.to"
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 
 class TopSerialyContentProvider(ContentProvider):
     urls = {'Seriály': BASE_URL+'/serialy'}
