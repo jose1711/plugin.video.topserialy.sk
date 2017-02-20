@@ -150,6 +150,8 @@ class TopSerialyContentProvider(ContentProvider):
         for index, source in enumerate(sources):
             if 'openload' in str(source):
                 provider = 'OPENLOAD'
+                # openload is broken atm
+                continue
                 metas = util.parse_html(source).select('meta')
                 fname = util.request(source)
                 for meta in metas:
