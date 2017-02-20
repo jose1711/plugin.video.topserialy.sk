@@ -1,6 +1,10 @@
-[B]0.0.10:[/B]
-base URL as variable
-added configure options topserialy.to username and password
+[B]0.1.1:[/B]
+openload resolver fixed - enabled again
+base url as variable
+series label has been translated (EN, CZ, SK)
+
+[B]0.1.0:[/B]
+disable openload as resolver is broken
 
 [B]0.0.9:[/B]
 topserialy.sk resited to topserialy.to

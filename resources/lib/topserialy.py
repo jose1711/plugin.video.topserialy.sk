@@ -31,6 +31,7 @@ from provider import ContentProvider
 from copy import copy
 
 __addon__ = xbmcaddon.Addon()
+__language__ = __addon__.getLocalizedString
 
 BASE = "topserialy.to"
 BASE_URL = u"https://www.topserialy.to"
@@ -39,10 +40,10 @@ sys.setdefaultencoding('utf8')
 
 
 class TopSerialyContentProvider(ContentProvider):
-    urls = {'Seriály': BASE_URL+'/serialy'}
+    urls = {__language__(30057): BASE_URL+'/serialy'}
 
-    def __init__(self, username=__addon__.getSetting('username'), password=__addon__ .getSetting('password'), filter=None):
-        ContentProvider.__init__(self, BASE, self.urls['Seriály'],
+    def __init__(self, username=None, password=None, filter=None):
+        ContentProvider.__init__(self, BASE, self.urls[__language__(30057)],
                                  username, password, filter)
 
     def __del__(self):
@@ -75,7 +76,7 @@ class TopSerialyContentProvider(ContentProvider):
             return self.list_seasons(url)
 
     def series_url(self, url):
-        return self.urls['Seriály'] + url
+        return self.urls[__language__(30057)] + url
 
     def list_series(self, url):
         result = []
@@ -155,7 +156,7 @@ class TopSerialyContentProvider(ContentProvider):
                     if meta['name'] in 'description':
                         fname = meta['content']
                 code = source.split('/')[-2]
-                url = 'http://openload.co/f/' + code + '/' + fname.replace(' ', '.')
+                url = 'https://openload.co/f/' + code + '/' + fname.replace(' ', '.')
                 for track in util.parse_html(source).select('track'):
                     if track.get('src'):
                         subs.append([track['src'], track['srclang']])
