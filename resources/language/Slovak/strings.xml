@@ -3,6 +3,8 @@
 	<string id="30001">Video nie je dostupné, skontrolujte,[CR] či funguje prehrávanie na webe.</string>
 	<string id="30003">[B]Najnovšie epizódy[/B]</string>
 	<string id="30004">Vyberte zdroj</string>
+	<string id="30011">Prihlasovacie meno</string>
+	<string id="30012">Heslo</string>
 	<string id="30030">Adresár pre sťahovanie</string>
 	<string id="30031">Nastavte prosím priečinok pre sťahovanie</string>
 	<string id="30032">Zobrazovať stav sťahovania</string>
@@ -18,10 +20,6 @@
 	<string id="30054">720p</string>
 	<string id="30055">480p</string>
 	<string id="30056">360p</string>
-	<string id="30057">Triedenie filmov</string>
-	<string id="30058">Najnovšie</string>
-	<string id="30059">Najstaršie</string>
-	<string id="30060">Najlepšie</string>
-	<string id="30061">Najsledovanejšie</string>
+	<string id="30057">Seriály</string>
 	<string id="31000">Dáta o použití sú zaslané len v okamihu, keď spustíte prehrávánie alebo sťahovanie videa doplnkom.</string>
 </strings>

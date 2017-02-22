@@ -23,17 +23,27 @@ import urllib
 import util
 import base64
 import re
+import sys
 import urlresolver
 import bs4
+import xbmcaddon
 from provider import ContentProvider
 from copy import copy
 
+__addon__ = xbmcaddon.Addon()
+__language__ = __addon__.getLocalizedString
+
+BASE = "topserialy.to"
+BASE_URL = u"https://www.topserialy.to"
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 
 class TopSerialyContentProvider(ContentProvider):
-    urls = {'Seriály': 'https://www.topserialy.to/serialy'}
+    urls = {__language__(30057): BASE_URL+'/serialy'}
 
     def __init__(self, username=None, password=None, filter=None):
-        ContentProvider.__init__(self, 'topserialy.to', self.urls['Seriály'],
+        ContentProvider.__init__(self, BASE, self.urls[__language__(30057)],
                                  username, password, filter)
 
     def __del__(self):
@@ -52,22 +62,21 @@ class TopSerialyContentProvider(ContentProvider):
         return result
 
     def search(self, keyword):
-        return self.list_series('https://www.topserialy.to' +
-                                '/search.php?search=' + urllib.quote_plus(keyword))
+        return self.list_series(BASE_URL + '/search.php?search=' + urllib.quote_plus(keyword))
 
     def list(self, url):
         if 'serialy.' in url:
             if 'epizody' in url:
                 print "listing episodes.."
                 return self.list_episodes(url)
-            elif 'topserialy.to/serialy' in url:
+            elif BASE + '/serialy' in url:
                 print "listing series.."
                 return self.list_series(url)
             print "listing seasons.."
             return self.list_seasons(url)
 
     def series_url(self, url):
-        return self.urls['Seriály'] + url
+        return self.urls[__language__(30057)] + url
 
     def list_series(self, url):
         result = []
@@ -77,8 +86,8 @@ class TopSerialyContentProvider(ContentProvider):
             for series in tree.select('.container a'):
                 item = self.dir_item()
                 item['title'] = series.select('span .name-search')[0].text
-                item['url'] = 'https://www.topserialy.to' + series.get('href')
-                item['img'] = 'https://www.topserialy.to' + series.span.img.get('src')
+                item['url'] = BASE_URL + series.get('href')
+                item['img'] = BASE_URL + series.span.img.get('src')
                 result.append(item)
         else:
             for series in tree.select('.container a.single-result'):
@@ -89,8 +98,8 @@ class TopSerialyContentProvider(ContentProvider):
                 if czsk_title not in '......' and czsk_title != original_title:
                     title += ' (' + czsk_title + ')'
                 item['title'] = title
-                item['url'] = 'https://www.topserialy.to' + series.get('href')
-                item['img'] = 'https://www.topserialy.to' + series.img.get('data-original')
+                item['url'] = BASE_URL + series.get('href')
+                item['img'] = BASE_URL + series.img.get('data-original')
                 result.append(item)
         return sorted(result)
 
@@ -99,7 +108,7 @@ class TopSerialyContentProvider(ContentProvider):
         for season in util.parse_html(url).select('.accordion'):
             item = self.dir_item()
             item['title'] = season.text.strip()
-            item['url'] = 'https://www.topserialy.to' + season.p['data']
+            item['url'] = BASE_URL + season.p['data']
             result.append(item)
         return result
 
@@ -107,7 +116,7 @@ class TopSerialyContentProvider(ContentProvider):
         result = []
         for episode in util.parse_html(url).select('a'):
             item = self.video_item()
-            item['url'] = 'https://www.topserialy.to/' + episode.get('href')
+            item['url'] = BASE_URL +'/'+ episode.get('href')
             season_episode = item['url'].split('-')[-1].upper()
             item['title'] = season_episode + ' ' + episode.text.strip()
             try:
@@ -141,15 +150,13 @@ class TopSerialyContentProvider(ContentProvider):
         for index, source in enumerate(sources):
             if 'openload' in str(source):
                 provider = 'OPENLOAD'
-                # openload is broken atm
-                continue
                 metas = util.parse_html(source).select('meta')
                 fname = util.request(source)
                 for meta in metas:
                     if meta['name'] in 'description':
                         fname = meta['content']
                 code = source.split('/')[-2]
-                url = 'http://openload.co/f/' + code + '/' + fname.replace(' ', '.')
+                url = 'https://openload.co/f/' + code + '/' + fname.replace(' ', '.')
                 for track in util.parse_html(source).select('track'):
                     if track.get('src'):
                         subs.append([track['src'], track['srclang']])
